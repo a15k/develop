@@ -1,0 +1,4 @@
+LineLength:
+  Max: 999
+StringLiterals:
+  Enabled: false

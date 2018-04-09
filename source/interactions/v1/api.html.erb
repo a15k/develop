@@ -1,0 +1,13 @@
+<div id="apiRoot"></div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      window.SwaggerUI({
+        dom_id: '#apiRoot',
+        // url: "http://localhost:2901/api/docs/v1"
+        url: "../interactions-1.0.0.json"
+      });
+    });
+  </script>
+<% end %>

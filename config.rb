@@ -8,7 +8,9 @@ activate :directory_indexes
 
 helpers WebpackAssetHelper
 
-raise "AWS credentials not set" if ENV['AWS_ACCESS_KEY_ID'].nil? || ENV['AWS_SECRET_ACCESS_KEY'].nil?
+if ARGV.include?("s3_sync") && (ENV['AWS_ACCESS_KEY_ID'].nil? || ENV['AWS_SECRET_ACCESS_KEY'].nil?)
+  raise "AWS credentials not set"
+end
 
 activate :s3_sync do |s3_sync|
   s3_sync.bucket                     = 'develop.a15k.org'
@@ -25,5 +27,5 @@ activate :s3_sync do |s3_sync|
   s3_sync.prefix                     = ''
   s3_sync.version_bucket             = false
   s3_sync.index_document             = 'index.html'
-  s3_sync.error_document             = '404.html'
+  s3_sync.error_document             = '404'
 end

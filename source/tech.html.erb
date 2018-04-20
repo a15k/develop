@@ -1,0 +1,58 @@
+---
+title: a15k: Tech Overview
+---
+
+<h1>Tech Overview</h1>
+
+<p>a15k has been set up to make accessing and contributing content as easy as possible.  This site provides libraries, API specifications, and walkthroughs to help you be an effective member of the network.</p>
+
+<h2>Getting Started</h2>
+
+<p>The following list will help you get started with a15k technologies.  We assume that your organization has already contacted the Assessment Network and established a relationship.</p>
+
+<ol>
+  <li>Contact the a15k tech team to set up your organization's membership on a15k.org.</li>
+  <li>From your member screen on a15k.org, get your API tokens.</li>
+  <li>Read through the <%= link_to "tech glossary", "#tech_glossary" %> below to get a better idea about the kinds of content the network holds.</li>
+  <li>Read through the <%= link_to "example implementation", "#example_implementation" %> and workflows below.</li>
+  <li>Visit the <%= link_to "Items", "/items" %> and <%= link_to "Interactions", "/interactions" %> details pages to read the API specs, access client libraries, and learn about more advanced a15k usage.</li>
+</ol>
+
+<h2>Tech Glossary</h2>
+
+<%
+@glossary = [
+  {
+    term: "Assessment",
+    desc: "The umbrella for all things related to an exercises that a student could work, including its stem, answer, solutions, and variants"
+  },
+  {
+    term: "Item",
+    desc: ""
+  },
+  {
+    term: "Solution",
+    desc: ""
+  },
+  {
+    term: "...",
+    desc: ""
+  }
+
+]
+%>
+
+<table class="table">
+  <tbody>
+    <% @glossary.each do |item| %>
+    <tr>
+      <th scope="row"><%= item[:term] %></th>
+      <td><%= item[:desc] %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2 id="example_implementation">An Example Implementation</h2>
+
+<p>TBD</p>

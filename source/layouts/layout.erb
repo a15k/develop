@@ -7,16 +7,18 @@
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Use title if it's in the page YAML frontmatter -->
-    <title><%= current_page.data.title || "a15k Developer Docs" %></title>
+    <title><%= current_page.data.title || "a15k Developer Portal" %></title>
 
-    <%= stylesheet_link_tag webpack_asset_path "site.scss" %>
     <%= stylesheet_link_tag webpack_asset_path "swagger-ui.css" %>
+    <%= stylesheet_link_tag webpack_asset_path "site.scss" %>
+    <%= stylesheet_link_tag webpack_asset_path "custom.scss" %>
+
   </head>
 
   <body class="<%= page_classes %>">
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="/">a15k Developer Docs</a>
+      <a class="navbar-brand" href="/">a15k Developer Portal</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -24,26 +26,32 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="/intro">Intro</a>
+            <a class="nav-link" href="/intro">Introduction</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="/getting_started">Getting Started</a>
+            <a class="nav-link" href="/tech">Tech Overview</a>
           </li>
           <li class="nav-item dropdown">
+            <a class="nav-link" href="/items">Items</a>
+            <% if false %>
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Items
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="/items/v1">v1</a>
             </div>
+            <% end %>
           </li>
           <li class="nav-item dropdown">
+            <a class="nav-link" href="/interactions">Interactions</a>
+            <% if false %>
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Interactions
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="/interactions/v1">v1</a>
             </div>
+            <% end %>
           </li>
 
         </ul>

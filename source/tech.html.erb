@@ -23,6 +23,10 @@ title: a15k: Tech Overview
 <%
 @glossary = [
   {
+    term: "Member",
+    desc: "Normally an organization that has joined the network, though in some cases refers to an individual.  A member has users that act on behalf of the member."
+  },
+  {
     term: "Assessment",
     desc: "The umbrella for all things related to an exercises that a student could work, including its stem, answer, solutions, and variants"
   },
@@ -55,4 +59,44 @@ title: a15k: Tech Overview
 
 <h2 id="example_implementation">An Example Implementation</h2>
 
-<p>TBD</p>
+<p>In the following we walk through UML diagrams and sample code for core operations within the network.  More advanced operations are
+described on the tech details pages.</p>
+
+<h3>Contributing Items</h3>
+
+<p>Add overview prose here...</p>
+
+<div class="centered-image">
+<%= image_tag "contribute_wsd.png", alt: "https://www.websequencediagrams.com/?lz=TWVtYmVyLT5JdGVtcyBBUEk6IHBvc3QgZm9ybWF0IGRldGFpbHMKABYJLS0-AC0GOgAbCElECgA9CAASCHJlbQBSBQAZCiB0b1xuc2VuZCB3aXRoIGNvbnRyaWJ1dGlvbnMKCmxvb3AgZWFjaCBhc3Nlc3NtZW50IHRvAB0KZQogICAgAIEUGGJ1bmRsZSBvZgAzDGRhdGEAZwYAgR4KICAgIACBNhQAawsAHwcAgTkZAB4NXG5mb3IgbGF0ZXIgdXBkYXRlcywgYW5hbHl0aWNzCmVuZAoKCgo&s=default" %>
+</div>
+
+<%= highlightjs(klass: 'html', content: <<-CONTENT
+# ruby code here
+CONTENT
+) %>
+
+<h3>Accessing Items</h3>
+
+<p>Add overview prose here...</p>
+
+<div class="centered-image">
+<%= image_tag "retrieve_wsd.png", alt: "https://www.websequencediagrams.com/?lz=CgphbHQgc2VhcmNoIHRvIGZpbmQKICAgIE1lbWJlci0-SXRlbXMgQVBJOgAfBwAZBQANCS0tPgAkBjogcGFnaW5hdGVkAEcIcmVzdWx0cyAod2l0aCBwcmV2aWV3KQBRDQA0CHJlbQBrBSBhc3Nlc3NtZW50XG5JRHMgb2YgaW50ZXJlc3QKCmVsc2UgdXNlIHNhdgBiBXQgb2YAKAtzAIE1BQplbmQKCgCBLRNkb3dubG9hZAAlDQAMHGZvcm1hdCBkZXNjcmlwdGlvbnMKCgpsb29wIHRleHQAgTUVdHJhbnNsYXRlAIEMDCBpbnRvXG4AgV4GLW5hdGl2ZQBXB1xudXNpbmcAVxUAgUQF&s=default" %>
+</div>
+
+<%= highlightjs(klass: 'html', content: <<-CONTENT
+# ruby code here
+CONTENT
+) %>
+
+
+<h3>Contributing Analytics</h3>
+
+<%= highlightjs(klass: 'html', content: <<-CONTENT
+<script src="//cdnjs.cloudflare.com/ajax/libs/interactions.a15k.js/1.0.0/interactions.min.js"></script>
+CONTENT
+)
+%>
+
+<p>...</p>
+
+

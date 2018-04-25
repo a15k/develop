@@ -9,9 +9,18 @@
     <!-- Use title if it's in the page YAML frontmatter -->
     <title><%= current_page.data.title || "a15k Developer Portal" %></title>
 
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs-themes@1.0.0/atelier-dune.light.css">
+
     <%= stylesheet_link_tag webpack_asset_path "swagger-ui.css" %>
     <%= stylesheet_link_tag webpack_asset_path "site.scss" %>
     <%= stylesheet_link_tag webpack_asset_path "custom.scss" %>
+
 
   </head>
 
@@ -31,7 +40,7 @@
           <li class="nav-item active">
             <a class="nav-link" href="/tech">Tech Overview</a>
           </li>
-          <li class="nav-item dropdown">
+          <li class="nav-item active">
             <a class="nav-link" href="/items">Items</a>
             <% if false %>
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -42,7 +51,7 @@
             </div>
             <% end %>
           </li>
-          <li class="nav-item dropdown">
+          <li class="nav-item active">
             <a class="nav-link" href="/interactions">Interactions</a>
             <% if false %>
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

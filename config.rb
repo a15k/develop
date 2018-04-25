@@ -1,5 +1,14 @@
 require "lib/webpack_asset_helpers"
 
+helpers do
+  def highlightjs(content:, klass: nil)
+    content = CGI::escapeHTML(content) if klass == 'html'
+    <<-MARKUP
+      <pre><code #{'class=' + klass if !klass.nil?}>#{content}</code></pre>
+    MARKUP
+  end
+end
+
 page '/*.xml', layout: false
 page '/*.json', layout: false
 page '/*.txt', layout: false

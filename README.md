@@ -1,4 +1,3 @@
-
 a15k Developer Docs
 ===================
 
@@ -8,7 +7,7 @@ Houses developer documentation for a15k.  Built on [middleman v4](https://middle
 - [middleman 4](https://middlemanapp.com/)
 - [webpack 2](https://webpack.js.org/)
 - [BrowserSync](https://www.browsersync.io/) - no manual page reloads ;-)
-- [Boostrap 4](https://v4-alpha.getbootstrap.com) - to start your frontend fast
+- [Boostrap 4](https://getbootstrap.com) - to start your frontend fast
 - [Font Awesome 4.7.0](https://fontawesome.io) - to have those nice icons present
 - [jQuery](http://jquery.com/)
 - [Rspec](http://rspec.info/) - prepared to test your static site - lol.

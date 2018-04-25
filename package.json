@@ -4,7 +4,7 @@
     "build": "NODE_ENV=production webpack --bail -p"
   },
   "dependencies": {
-    "bootstrap": "^4.0.0",
+    "bootstrap": "^4.1.0",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
     "swagger-ui": "^3.13.3",

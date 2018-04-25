@@ -1,4 +1,3 @@
-
 nav {
   margin-bottom: 20px;
 }
@@ -26,4 +25,15 @@ div.centered-image {
 
 pre code {
   border: 1px solid black;
+}
+
+
+// override bootstrap col width for swagger documentation blocks
+// otherwise they're squished to the right side
+.swagger-ui {
+  .opblock-body {
+    .col {
+      width: inherit;
+    }
+  }
 }

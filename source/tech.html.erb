@@ -39,6 +39,23 @@ title: a15k: Tech Overview
     desc: ""
   },
   {
+    term: "Question",
+    desc: ""
+  },
+  {
+    term: "Translator",
+    desc: ""
+  },
+  {
+    term: "User",
+    desc: ""
+  },
+  {
+    term: "Format",
+    desc: ""
+  },
+
+  {
     term: "...",
     desc: ""
   }
@@ -64,7 +81,21 @@ described on the tech details pages.</p>
 
 <h3>Contributing Items</h3>
 
-<p>Add overview prose here...</p>
+<p>The Assessment Network tries to impose as few restrictions as possible on the items contributed by members.  We just need the following:</p>
+
+<p><b>We <i>do not</i> ask you to format your content according to some common schema.<br>
+   We <i>do</i> ask that you document whatever format you are using.</b></p>
+
+<p>We recognize that it would be a fool's errand to ask members to all rally around a common assessment format.  Even if such a thing were possible in some cases, members will have unique content that will never losslessly map to a common format.  So we don't even try - we just ask members to give us content in whatever format they have and also to describe that format so that other members can effectively use the content they take from the network.</p>
+
+<p><b>We ask for the assessments to be given individually.</b></p>
+
+<p>If you have 1000 items to contribute, we want them separated out when they arrive at the network (e.g. by calling the API 1000 times or by using a bulk API that accepts an array of assessment items).  We need to be able track and analyze assessments on an individual basis, and since we don't care about the internal format of the content, we don't want to be in a position of having to unpack a blob of 1000 items.</p>
+
+<p><b>We ask for solutions to not be embedded in question content.</b></p>
+
+<p>We want to be able to track and analyze solutions separately from their questions.  As such we need them in isolation and our API has a dedicated spot for them. As stated above, we (as the network) don't want to understand your content format to be able to do that.  Other members may eventually contribute their own solutions to your questions, which is another reason for the network's API to view them as separate entities.</p>
+
 
 <div class="centered-image">
 <%= image_tag "contribute_wsd.png", alt: "https://www.websequencediagrams.com/?lz=TWVtYmVyLT5JdGVtcyBBUEk6IHBvc3QgZm9ybWF0IGRldGFpbHMKABYJLS0-AC0GOgAbCElECgA9CAASCHJlbQBSBQAZCiB0b1xuc2VuZCB3aXRoIGNvbnRyaWJ1dGlvbnMKCmxvb3AgZWFjaCBhc3Nlc3NtZW50IHRvAB0KZQogICAgAIEUGGJ1bmRsZSBvZgAzDGRhdGEAZwYAgR4KICAgIACBNhQAawsAHwcAgTkZAB4NXG5mb3IgbGF0ZXIgdXBkYXRlcywgYW5hbHl0aWNzCmVuZAoKCgo&s=default" %>

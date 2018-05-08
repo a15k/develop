@@ -1,0 +1,14 @@
+<div id="apiRoot"></div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      window.SwaggerUI({
+        dom_id: '#apiRoot',
+        url: "https://raw.githubusercontent.com/a15k/metadata-repository/master/swagger/v1/swagger.json"
+      });
+    });
+  </script>
+<% end %>
+
+

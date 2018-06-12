@@ -3,7 +3,7 @@
   "info": {
     "version": "1.0.0",
     "title": "Assessment Network API",
-    "description": ">\nStores content for the Assessment Network\nRequests to this API must include application/json in the `Accept` header.\nAll endpoints require an API key to be passed in the request header.  API keys can be obtained by members at www.a15k.org.\n",
+    "description": ">\nStores content for the Assessment Network\n\nAPI Version is specified in the URL path as `api/<version>/resource`\nVersion will default to the latest if it's ommited\n\nAll endpoints require an API key to be passed in the request header.\nAPI keys can be obtained by members at www.a15k.org.\n",
     "termsOfService": "http://a15k.org/terms/",
     "contact": {
       "name": "info@a15k.org"
@@ -15,12 +15,12 @@
   "securityDefinitions": {
     "api_token": {
       "type": "apiKey",
-      "name": "api_token",
+      "name": "Authorization",
       "in": "header"
     }
   },
   "host": null,
-  "basePath": "/api",
+  "basePath": "/api/v1",
   "consumes": [
     "application/json"
   ],
@@ -50,14 +50,14 @@
           "403": {
             "description": "Forbidden"
           },
-          "404": {
-            "description": "Not found"
-          },
           "500": {
             "description": "Server error.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "404": {
+            "description": "Not found"
           },
           "200": {
             "description": "Success.  Returns all formats",
@@ -97,18 +97,12 @@
         ],
         "parameters": [
           {
-            "paramType": "body",
-            "name": "name",
-            "description": "The name of the format",
-            "required": true
-          },
-          {
-            "name": "assessment",
+            "name": "format",
             "in": "body",
             "description": "Format to be created",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/FormatInput"
+              "$ref": "#/definitions/Format"
             }
           }
         ],
@@ -118,9 +112,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not found"
           },
           "500": {
             "description": "Server error.",
@@ -149,7 +140,7 @@
         }
       }
     },
-    "/assessment/{id}": {
+    "/assessments/{id}": {
       "get": {
         "summary": "Retrieve an assessment",
         "operationId": "getAssessment",
@@ -163,6 +154,16 @@
         "tags": [
           "Assessments"
         ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "UUID of assessment to fetch",
+            "required": true,
+            "type": "integer",
+            "format": "uuid"
+          }
+        ],
         "responses": {
           "401": {
             "description": "Not authorized"
@@ -170,8 +171,67 @@
           "403": {
             "description": "Forbidden"
           },
+          "500": {
+            "description": "Server error.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
           "404": {
             "description": "Not found"
+          },
+          "200": {
+            "description": "Success.  Returns all assessments",
+            "schema": {
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "description": "Flag indicating if request was successfull"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "A message describing the request status"
+                },
+                "data": {
+                  "$ref": "#/definitions/Assessment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assessments": {
+      "post": {
+        "summary": "create an assessment",
+        "operationId": "createAssessment",
+        "security": [
+          {
+            "api_token": [
+
+            ]
+          }
+        ],
+        "tags": [
+          "Assessments"
+        ],
+        "parameters": [
+          {
+            "name": "assessment",
+            "in": "body",
+            "description": "Assessment to be created",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Assessment"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Not authorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Server error.",
@@ -192,103 +252,40 @@
                   "description": "A message describing the request status"
                 },
                 "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/Assessment"
-                  }
+                  "$ref": "#/definitions/Assessment"
                 }
               }
             }
           }
         }
-      }
-    },
-    "/assessment": {
-      "post": {
-        "summary": "create an assessment",
-        "operationId": "createAssessment",
-        "security": [
-          {
-            "api_token": [
-
-            ]
-          }
-        ],
-        "tags": [
-          "Assessments"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "401": {
-            "description": "Not authorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not found"
-          },
-          "500": {
-            "description": "Server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "200": {
-            "description": "Success.  Returns all formats",
-            "schema": {
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "description": "Flag indicating if request was successfull"
-                },
-                "message": {
-                  "type": "string",
-                  "description": "A message describing the request status"
-                },
-                "data": {
-                  "$ref": "#/definitions/Format"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "assessment",
-            "in": "body",
-            "description": "Assessment to be created",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/AssessmentInput"
-            }
-          }
-        ]
       }
     }
   },
   "definitions": {
     "Format": {
+      "description": "Formats define how assessments are encoded",
       "required": [
         "id",
         "name",
-        "description"
+        "specification"
       ],
       "properties": {
         "id": {
-          "type": "string"
+          "type": "String",
+          "format": "uuid"
         },
         "name": {
-          "type": "string"
+          "type": "String",
+          "description": "A short description of the format"
         },
-        "description": {
-          "type": "string"
+        "specification": {
+          "type": "string",
+          "specification": "A comprehensive description of the format"
         }
       }
     },
     "Assessment": {
+      "description": "The umbrella record for all things related to an exercises that a student could work, including its stem, answer, solutions, and variants",
       "required": [
         "id",
         "version",
@@ -299,24 +296,38 @@
       ],
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "format": "uuid",
+          "description": "A unique value that can be used to link the assessment back to the contributors copy"
         },
         "created_at": {
           "type": "string",
-          "format": "date-time"
+          "format": "Date"
         },
         "identifier": {
-          "type": "string"
+          "type": "string",
+          "description": "An unique contributed-provided identifier that can be used to link the assessment back to the contributor's original version"
         },
         "version": {
-          "type": "string"
+          "type": "string",
+          "description": "The version for the assessment, an incrementing number is recommended, but any string value is allowed as long as it‘s unique within the scope of the identifier"
         },
         "visibility": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "internal",
+            "external"
+          ],
+          "description": "If the assessment may be viewed by the public, or only by other a15k members.  Defaults to \"internal\""
+        },
+        "preview_html": {
+          "type": "string",
+          "description": "If provided, will be used to generate a preview on the a15k website"
         },
         "format_id": {
           "type": "string",
-          "format": "uuid"
+          "format": "uuid",
+          "description": "The uuid of a previously registered format"
         },
         "questions": {
           "type": "array",
@@ -328,183 +339,51 @@
     },
     "Question": {
       "required": [
-        "id",
         "content",
         "created_at",
-        "varient",
         "format_id"
       ],
+      "description": "The container for all of the content needed to present an assessment and to grade it.\nE.g. for a multiple-choice assessment, the question would contain the stem,\nthe answer choices, and the correct choice would be flagged.\n\nAssessments typically only have one question. Multiple questions are allowed to\nsupport generative assessments.\n\nA generative assessment is a single assessment that has many variants,\nwhich are often randomly generated.\n\nTypically, the author of a generative assessment uses a small amount of code\nto create many variants of the same question where all of the numbers change\nbetween variants. Because these variants are essentially the same one\noriginal question, we bundle them all under one Assessment.\n",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
         "format_id": {
           "type": "string",
-          "format": "uuid"
+          "format": "uuid",
+          "description": "The uuid of a previously registered format"
+        },
+        "variant": {
+          "type": "string",
+          "description": "Identifies which variant of a generative item this question is. Only required for generative items."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content of the question. The formatting the the content is indicated by the assessment's linked format"
         },
         "solutions": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Solution"
           }
-        },
-        "assets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Asset"
-          }
         }
       }
     },
     "Solution": {
       "required": [
-        "id",
         "content",
         "created_at",
-        "varient",
         "format_id"
       ],
+      "description": "A walkthrough of how to answer the question.\nThis is often some prose combined with math formulas or diagrams.\nA Solution is not the answer to a question (e.g. it isn't the (a), (b),\nand (c) answers of a multiple choice question.)\n\nSolutions are recommended but not required when contributing assessments. A\ndditionally, other members may contribute solutions to your\nassessments without involving you.\n",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "created_at": {
+        "content": {
           "type": "string",
-          "format": "date-time"
-        },
-        "variant": {
-          "type": "string"
+          "description": "A walkthrough of how to answer the question.  The formatting the the content is indicated by the assessment's linked format"
         },
         "format_id": {
           "type": "string",
-          "format": "uuid"
-        },
-        "assets": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Asset"
-          }
+          "format": "uuid",
+          "description": "The uuid of a previously registered format"
         }
       }
-    },
-    "Asset": {
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "FormatInput": {
-      "allOf": [
-        {
-          "required": [
-            "name",
-            "description"
-          ],
-          "properties": {
-            "name": {
-              "type": "string",
-              "description": "The name of the format"
-            },
-            "description": {
-              "type": "string",
-              "description": "A longer description that fully explains the format"
-            }
-          }
-        }
-      ]
-    },
-    "AssessmentInput": {
-      "allOf": [
-        {
-          "required": [
-            "format_id"
-          ],
-          "properties": {
-            "identifier": {
-              "type": "string",
-              "description": "A unique identifier for the assessment, uuid is recommended but not required"
-            },
-            "format_id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "The uuid of a previously registered format"
-            },
-            "version": {
-              "type": "string",
-              "description": "The version for the assessment, an incrementing number is recommended, but any string value is allowed as long as it‘s unique within the scope of the identifier"
-            },
-            "content": {
-              "type": "string",
-              "description": "Content the applies to all questions and solutions.  The formatting the the content is indicated by the assessment's linked format"
-            },
-            "visibility": {
-              "type": "string",
-              "format": "uuid",
-              "enum": [
-                "internal",
-                "external"
-              ],
-              "description": "If the assessment may be viewed by the public, or only by other a15k members.  Defaults to \"internal\""
-            },
-            "questions": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": [
-                  "format_id",
-                  "content"
-                ],
-                "properties": {
-                  "format_id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "required": true,
-                    "description": "The uuid of a previously registered format"
-                  },
-                  "content": {
-                    "type": "string",
-                    "description": "Content of the question. Formatting of the content is indicated by the linked format"
-                  },
-                  "solutions": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "format_id",
-                        "content"
-                      ],
-                      "properties": {
-                        "format_id": {
-                          "type": "string",
-                          "format": "uuid",
-                          "required": true,
-                          "description": "The uuid of a previously registered format"
-                        },
-                        "content": {
-                          "type": "string",
-                          "description": "Content of the solution. Formatting of the content is indicated by the linked format"
-                        },
-                        "variant": {
-                          "type": "string",
-                          "description": "A unique value shared with multiple solutions, allowing them to be linked together for auto-generated assessments"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      ]
     },
     "Error": {
       "properties": {

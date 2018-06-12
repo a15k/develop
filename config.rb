@@ -1,4 +1,5 @@
 require "lib/webpack_asset_helpers"
+require "lib/client_finder"
 
 helpers do
   def highlightjs(content:, klass: nil)

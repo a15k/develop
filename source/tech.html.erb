@@ -32,15 +32,30 @@ title: a15k: Tech Overview
   },
   {
     term: "Item",
-    desc: ""
+    desc: "A synoymn for an Assessment.  You may also see us use the term 'assessment item'."
   },
   {
     term: "Solution",
-    desc: ""
+    desc: <<~DESC
+      A walkthrough of how to answer the question.  This is often some prose combined with math formulas or diagrams.
+      A Solution is not the answer to a question (e.g. it isn't the (a), (b), and (c) answers of a multiple choice question.)
+
+      Solutions are recommended but not required when contributing assessments.  Additionally, other members may
+      contribute solutions to your assessments without involving you.
+    DESC
   },
   {
     term: "Question",
-    desc: ""
+    desc: <<~DESC
+      The container for all of the content needed to present an assessment and to grade it.  E.g. for a multiple-choice
+      assessment, the question would contain the stem, the answer choices, and the correct choice would be flagged.
+
+      Assessments typically only have one question.  Multiple questions are allowed to support generative assessments.  
+      A generative assessment is a single assessment that has many variants, which are often randomly generated. 
+      Typically, the author of a generative assessment uses a small amount of code to create many variants of the same
+      question where all of the numbers change between variants.  Because these variants are essentially the same one 
+      original question, we bundle them all under one Assessment.
+    DESC
   },
   {
     term: "Translator",
@@ -48,11 +63,15 @@ title: a15k: Tech Overview
   },
   {
     term: "User",
-    desc: ""
+    desc: "Someone with a login to a15k.org who is part of an organization that is a Member."
   },
   {
     term: "Format",
-    desc: ""
+    desc: <<~DESC 
+      A document describing assessment content within the network.  Members are allowed to contribute content
+      in whatever form they wish, as long as they describe that form in a Format.  Documenting the format of 
+      your content lets other members consume your content.
+    DESC
   },
 
   {
@@ -68,7 +87,7 @@ title: a15k: Tech Overview
     <% @glossary.each do |item| %>
     <tr>
       <th scope="row"><%= item[:term] %></th>
-      <td><%= item[:desc] %></td>
+      <td><%= simple_format(item[:desc]) %></td>
     </tr>
     <% end %>
   </tbody>
@@ -97,12 +116,52 @@ described on the tech details pages.</p>
 <p>We want to be able to track and analyze solutions separately from their questions.  As such we need them in isolation and our API has a dedicated spot for them. As stated above, we (as the network) don't want to understand your content format to be able to do that.  Other members may eventually contribute their own solutions to your questions, which is another reason for the network's API to view them as separate entities.</p>
 
 
+
 <div class="centered-image">
 <%= image_tag "contribute_wsd.png", alt: "https://www.websequencediagrams.com/?lz=TWVtYmVyLT5JdGVtcyBBUEk6IHBvc3QgZm9ybWF0IGRldGFpbHMKABYJLS0-AC0GOgAbCElECgA9CAASCHJlbQBSBQAZCiB0b1xuc2VuZCB3aXRoIGNvbnRyaWJ1dGlvbnMKCmxvb3AgZWFjaCBhc3Nlc3NtZW50IHRvAB0KZQogICAgAIEUGGJ1bmRsZSBvZgAzDGRhdGEAZwYAgR4KICAgIACBNhQAawsAHwcAgTkZAB4NXG5mb3IgbGF0ZXIgdXBkYXRlcywgYW5hbHl0aWNzCmVuZAoKCgo&s=default" %>
 </div>
 
-<%= highlightjs(klass: 'html', content: <<-CONTENT
-# ruby code here
+<%= highlightjs(klass: 'ruby', content: <<-CONTENT
+
+  # Configure the client (this client is auto-generated from the Swagger API JSON)
+
+  A15kClient.configure do |c|
+    c.host = 'a15k.org'
+    c.scheme = 'https'
+    c.api_key['Authorization'] = '12345678901234567890'
+    c.verify_ssl_host = true
+    c.api_key_prefix['Authorization'] = 'Bearer'
+  end
+
+  api = A15kClient::AssessmentsApi.new
+
+  # Assume we have already uploaded the format for our content and we have a UUID for it.
+  # Also assume that this format describes both questions and solutions.
+
+  ox_format_uuid = "7ec91a74-ff17-4460-9776-1f2fc6b9ce61"
+
+  # Iterate through the exercises and post them to the API
+
+  my_exercises.each do |exercise|
+    questions = exercise.delete('questions')
+
+    api.api_v1_assessments_json_post(
+      format_id: ox_format_uuid,
+      content: JSON.generate(exercise)
+      questions: questions.map do |question|
+        solutions = question.delete('solutions')
+        {
+          format_id: ox_format_uuid,
+          content: JSON.generate(question)
+          solutions: solutions.map do |solution|
+            format_id: ox_format_uuid,
+            content: JSON.generate(solution)
+          end
+        }
+      end
+    )
+  end
+
 CONTENT
 ) %>
 

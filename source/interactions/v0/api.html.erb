@@ -3,7 +3,7 @@
 <% content_for :javascript do %>
   <script type="text/javascript">
     $(document).ready(function() {
-      window.SwaggerUI({
+      SwaggerUIBundle({
         dom_id: '#apiRoot',
         // url: "http://localhost:2901/api/docs/v1"
         url: "/interactions/v0/interactions-0.1.0.json"
@@ -11,3 +11,4 @@
     });
   </script>
 <% end %>
+

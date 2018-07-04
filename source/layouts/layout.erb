@@ -9,6 +9,8 @@
     <!-- Use title if it's in the page YAML frontmatter -->
     <title><%= current_page.data.title || "a15k Developer Portal" %></title>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.17.2/swagger-ui-bundle.js"></script>
+
     <link rel="stylesheet"
           href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
 
@@ -16,8 +18,8 @@
         <script>hljs.initHighlightingOnLoad();</script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs-themes@1.0.0/atelier-dune.light.css">
+    <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.17.2/swagger-ui.css" %>
 
-    <%= stylesheet_link_tag webpack_asset_path "swagger-ui.css" %>
     <%= stylesheet_link_tag webpack_asset_path "site.scss" %>
     <%= stylesheet_link_tag webpack_asset_path "custom.scss" %>
 

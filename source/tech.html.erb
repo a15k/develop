@@ -34,32 +34,32 @@ title: a15k: Tech Overview
     term: "Item",
     desc: "A synoymn for an Assessment.  You may also see us use the term 'assessment item'."
   },
-  {
-    term: "Solution",
-    desc: <<~DESC
-      A walkthrough of how to answer the question.  This is often some prose combined with math formulas or diagrams.
-      A Solution is not the answer to a question (e.g. it isn't the (a), (b), and (c) answers of a multiple choice question.)
+  # {
+  #   term: "Solution",
+  #   desc: <<~DESC
+  #     A walkthrough of how to answer the question.  This is often some prose combined with math formulas or diagrams.
+  #     A Solution is not the answer to a question (e.g. it isn't the (a), (b), and (c) answers of a multiple choice question.)
 
-      Solutions are recommended but not required when contributing assessments.  Additionally, other members may
-      contribute solutions to your assessments without involving you.
-    DESC
-  },
+  #     Solutions are recommended but not required when contributing assessments.  Additionally, other members may
+  #     contribute solutions to your assessments without involving you.
+  #   DESC
+  # },
   {
-    term: "Question",
+    term: "Variant",
     desc: <<~DESC
       The container for all of the content needed to present an assessment and to grade it.  E.g. for a multiple-choice
-      assessment, the question would contain the stem, the answer choices, and the correct choice would be flagged.
+      assessment, the variant should at a minimum contain the stem, the answer choices, and the correctness of each choice.
 
-      Assessments typically only have one question.  Multiple questions are allowed to support generative assessments.  
-      A generative assessment is a single assessment that has many variants, which are often randomly generated. 
+      Assessments typically only have one variant.  Multiple variants are allowed to support generative assessments.
+      A generative assessment is a single assessment that has many variants, which are often randomly generated.
       Typically, the author of a generative assessment uses a small amount of code to create many variants of the same
-      question where all of the numbers change between variants.  Because these variants are essentially the same one 
-      original question, we bundle them all under one Assessment.
+      question where all of the numbers change between variants.  Because these variants are derived from the same source,
+      we bundle them all under one Assessment.
     DESC
   },
   {
     term: "Translator",
-    desc: ""
+    desc: "A bit of code that can translate an assessment from one format to another."
   },
   {
     term: "User",
@@ -67,17 +67,12 @@ title: a15k: Tech Overview
   },
   {
     term: "Format",
-    desc: <<~DESC 
+    desc: <<~DESC
       A document describing assessment content within the network.  Members are allowed to contribute content
-      in whatever form they wish, as long as they describe that form in a Format.  Documenting the format of 
+      in whatever form they wish, as long as they describe that form in a Format.  Documenting the format of
       your content lets other members consume your content.
     DESC
   },
-
-  {
-    term: "...",
-    desc: ""
-  }
 
 ]
 %>
@@ -111,82 +106,252 @@ described on the tech details pages.</p>
 
 <p>If you have 1000 items to contribute, we want them separated out when they arrive at the network (e.g. by calling the API 1000 times or by using a bulk API that accepts an array of assessment items).  We need to be able track and analyze assessments on an individual basis, and since we don't care about the internal format of the content, we don't want to be in a position of having to unpack a blob of 1000 items.</p>
 
+<% if false # since not currently true %>
 <p><b>We ask for solutions to not be embedded in question content.</b></p>
 
 <p>We want to be able to track and analyze solutions separately from their questions.  As such we need them in isolation and our API has a dedicated spot for them. As stated above, we (as the network) don't want to understand your content format to be able to do that.  Other members may eventually contribute their own solutions to your questions, which is another reason for the network's API to view them as separate entities.</p>
-
-
+<% end %>
 
 <div class="centered-image">
 <%= image_tag "contribute_wsd.png", alt: "https://www.websequencediagrams.com/?lz=TWVtYmVyLT5JdGVtcyBBUEk6IHBvc3QgZm9ybWF0IGRldGFpbHMKABYJLS0-AC0GOgAbCElECgA9CAASCHJlbQBSBQAZCiB0b1xuc2VuZCB3aXRoIGNvbnRyaWJ1dGlvbnMKCmxvb3AgZWFjaCBhc3Nlc3NtZW50IHRvAB0KZQogICAgAIEUGGJ1bmRsZSBvZgAzDGRhdGEAZwYAgR4KICAgIACBNhQAawsAHwcAgTkZAB4NXG5mb3IgbGF0ZXIgdXBkYXRlcywgYW5hbHl0aWNzCmVuZAoKCgo&s=default" %>
 </div>
 
+<p>The code that OpenStax uses to contributes assessments is open source, and can be found here: <%= link_to "https://github.com/openstax/exercises/blob/master/lib/a15k", "https://github.com/openstax/exercises/blob/master/lib/a15k" %>. Here's a description of the five files in that directory:</p>
+
+<table class="table">
+  <tbody>
+    <tr>
+      <th>Filename</th>
+      <th>Purpose</th>
+    </tr>
+    <tr>
+      <td>exporter.rb</td>
+      <td>Main script; finds releasable assessments and exports them one by one.</td>
+    </tr>
+    <tr>
+      <td>format.yml</td>
+      <td>YAML file storing the OpenStax format that describes how our content is encoded.</td>
+    </tr>
+    <tr>
+      <td>html_preview.html.erb</td>
+      <td>An HTML template used to make HTML previews of our assessments. See <%= link_to "recommendations below", "#preview-recs" %>.</td>
+    </tr>
+    <tr>
+      <td>html_preview.rb</td>
+      <td>A little code to help us use the HTML template without running all of Ruby on Rails.</td>
+    </tr>
+    <tr>
+      <td>mathjax.html.erb</td>
+      <td>Another HTML template that includes Mathjax code and configuration in the HTML previews that contain math.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The main script, exporter.rb, uses a15k-supplied autogenerated Ruby bindings to access the Items API (see <%= link_to "the Items overview page", "/items" %> for a complete list of clients).
+In our application's initialization code, we configure these bindings so they are ready for use from the exporter.  That configuration looks like:</p>
+
 <%= highlightjs(klass: 'ruby', content: <<-CONTENT
-
-  # Configure the client (this client is auto-generated from the Swagger API JSON)
-
   A15kClient.configure do |c|
     c.host = 'a15k.org'
     c.scheme = 'https'
-    c.api_key['Authorization'] = '12345678901234567890'
-    c.verify_ssl_host = true
-    c.api_key_prefix['Authorization'] = 'Bearer'
+    c.api_key['Authorization'] = '12345678901234567890' # your token goes here
   end
+CONTENT
+) %>
 
-  api = A15kClient::AssessmentsApi.new
+<p>Next we've pasted the content of our <%= link_to "export script, exporter.rb", "https://github.com/openstax/exercises/blob/master/lib/a15k/exporter.rb" %>.</p>
 
-  # Assume we have already uploaded the format for our content and we have a UUID for it.
-  # Also assume that this format describes both questions and solutions.
+<%= highlightjs(klass: 'ruby', content: <<-CONTENT
+require 'a15k/html_preview'
 
-  ox_format_uuid = "7ec91a74-ff17-4460-9776-1f2fc6b9ce61"
+module A15k
+  class Exporter
 
-  # Iterate through the exercises and post them to the API
+    class CreateAssessmentError < StandardError; end
 
-  my_exercises.each do |exercise|
-    questions = exercise.delete('questions')
+    def initialize
+      @outcomes = {
+        success_count: 0,
+        failure_info: []
+      }
+    end
 
-    api.api_v1_assessments_json_post(
-      format_id: ox_format_uuid,
-      content: JSON.generate(exercise)
-      questions: questions.map do |question|
-        solutions = question.delete('solutions')
-        {
-          format_id: ox_format_uuid,
-          content: JSON.generate(question)
-          solutions: solutions.map do |solution|
-            format_id: ox_format_uuid,
-            content: JSON.generate(solution)
-          end
-        }
+    def run
+      format = make_sure_format_is_uploaded_and_return
+
+      Exercise.published                     # Select only published exercises
+              .can_release_to_a15k           # That have been marked as releaseable to a15k
+              .not_released_to_a15k          # And that haven't yet been released
+              .find_each do |exercise|       # iterate through them
+
+        begin
+          export_one_exercise(exercise, format)
+
+          @outcomes[:success_count] += 1     # the rest here is error handling and logging
+        rescue A15kClient::ApiError => ee
+          message = JSON.parse(ee.response_body)["message"]
+          @outcomes[:failure_info].push({uid: exercise.uid, message: message})
+        rescue CreateAssessmentError => ee
+          @outcomes[:failure_info].push({uid: exercise.uid, message: ee.message})
+        end
+
       end
-    )
+
+      @outcomes
+    end
+
+    def make_sure_format_is_uploaded_and_return
+      # See if it is already uploaded
+      format = formats_api.get_formats
+                          .data
+                          .find{|format| format.identifier == local_format_data['identifier']}
+
+      # If it is uploaded, return it; otherwise upload it via the API and return it
+      format || formats_api.create_format(local_format_data).data
+    end
+
+    def local_format_data
+      @local_format_data ||= YAML.load_file Rails.root.join('lib/a15k', 'format.yml')
+    end
+
+    def export_one_exercise(exercise, format)
+      # Get the exercise JSON; we toss out "community solutions" for licensing
+      # reasons.
+
+      exercise_data = Api::V1::Exercises::Representer.new(exercise).to_hash(user_options: {can_view_solutions: true})
+      exercise_data['questions'].each do |question_data|
+        question_data.delete('community_solutions')
+      end
+
+      # Make the API call
+      reply = assessments_api.create_assessment(
+        source_identifier: exercise.publication_group.uuid,      # the shared UUID among versions
+        source_version: exercise.publication.version,            # this version's version number
+        variants: [                                              # we don't have generative assessments,
+          {                                                      #   so only one 'variant'
+            format_id: format.id,
+            content: exercise_data.to_json,
+            preview_html: A15k::HtmlPreview.new(exercise).generate,
+          }
+        ],
+        metadata: {
+          tags: exercise.tags.to_a
+        }
+      )
+
+      raise(CreateAssessmentError, reply.message) if !reply.success
+
+      # Store the A15k identifier and version locally to let us report on them later
+      exercise.update_attributes(
+        a15k_identifier: reply.data.a15k_identifier,
+        a15k_version: reply.data.a15k_version
+      )
+    end
+
+    def formats_api
+      @formats_api ||= A15kClient::FormatsApi.new          # the auto-generated Ruby API client
+    end
+
+    def assessments_api
+      @assessments_api ||= A15kClient::AssessmentsApi.new  # the auto-generated Ruby API client
+    end
+
   end
+end
+CONTENT
+) %>
+
+<p>The exporter shown above is a pure Ruby class.  We made a <%= link_to "Rake script", "https://github.com/openstax/exercises/blob/master/lib/tasks/a15k/export.rake" %>
+that we can call from the command line to invoke the exporter.
+There's one line that calls the exporter; the rest is just reporting on how the export went.</p>
+
+<%= highlightjs(klass: 'ruby', content: <<-CONTENT
+require 'a15k/exporter'
+require 'yaml'
+
+namespace :a15k do
+  desc "export exercise to a15k"
+  task :export, [] => [:environment] do
+
+    # Run it!
+
+    outcomes = A15k::Exporter.new.run
+
+    # Report on outcomes
+
+    success_count = outcomes[:success_count]
+    failure_count = outcomes[:failure_info].length
+    total_count = success_count + failure_count
+
+    puts "Exported #\{success_count\} of #\{total_count\} exercises to A15k.\\n"
+
+    if outcomes[:failure_info].any?
+      puts "Failure info:\\n"
+      outcomes[:failure_info].each do |failure|
+        puts "  uid: #\{failure[:uid]\}, message: #\{failure[:message]\}"
+      end
+    end
+
+  end
+end
 
 CONTENT
 ) %>
 
+<h4 id="preview-recs">Recommendations for Preview HTML</h4>
+
+<p>An nice feature of a15k is that we don't require everyone to contribute content according to a standard schema.  But the flip side of that is that it is not possible to show previews of arbitrary content.
+That's why we ask contributors to include an HTML preview with each assessment.</p>
+
+<p>Here are some recommendations to follow when generating preview HTML for your contributions:</p>
+
+<ul>
+  <li><b>Don't stress about making your previews immaculate</b>; they should just convey the gist of what you have contributed.  Previews are not intended to be shown in any end-user product, they are just for use by staff of a15k members.</li>
+  <li><b>Favor inline JS and CSS or the use of very stable URLs, e.g. CDNs</b>.  We don't want changes in member systems to impact the integrity of our previews.</li>
+  <li><b>Know that previews are shown inside their own iframe on a15k.org</b>, meaning you are in complete control of the styling and Javascript environment.</li>
+</ul>
+
+
 <h3>Accessing Items</h3>
 
-<p>Add overview prose here...</p>
+<p>How members choose to access items in a15k is somewhat TBD pending discussions with pilot members.  APIs and a basic search UI exist, but we are looking for feedback that guides how we extend those capabilities to best support the needs
+of our members.</p>
+
+<p>The following sequence diagram shows one way a member can access items using the Items API.  The loop at the end of the diagram exists because members will likely need to translate the content they have download from the source format to
+the format that the downloading member uses internally.</p>
 
 <div class="centered-image">
 <%= image_tag "retrieve_wsd.png", alt: "https://www.websequencediagrams.com/?lz=CgphbHQgc2VhcmNoIHRvIGZpbmQKICAgIE1lbWJlci0-SXRlbXMgQVBJOgAfBwAZBQANCS0tPgAkBjogcGFnaW5hdGVkAEcIcmVzdWx0cyAod2l0aCBwcmV2aWV3KQBRDQA0CHJlbQBrBSBhc3Nlc3NtZW50XG5JRHMgb2YgaW50ZXJlc3QKCmVsc2UgdXNlIHNhdgBiBXQgb2YAKAtzAIE1BQplbmQKCgCBLRNkb3dubG9hZAAlDQAMHGZvcm1hdCBkZXNjcmlwdGlvbnMKCgpsb29wIHRleHQAgTUVdHJhbnNsYXRlAIEMDCBpbnRvXG4AgV4GLW5hdGl2ZQBXB1xudXNpbmcAVxUAgUQF&s=default" %>
 </div>
 
-<%= highlightjs(klass: 'html', content: <<-CONTENT
+<%#= highlightjs(klass: 'html', content: <<-CONTENT
 # ruby code here
 CONTENT
 ) %>
 
 
-<h3>Contributing Analytics</h3>
+<h3>Contributing Usage Data</h3>
 
-<%= highlightjs(klass: 'html', content: <<-CONTENT
+<p>Members can contribute usage data for network assessments.  The more members contribute this kind of data, the more we can learn about and improve the shared content in the network.  APIs and client libraries exist for members to make these contributions (see the <%= link_to "Interactions", "/interactions" %> page for more details); note however that they have not seen much use so should be considered experimental at the moment.</p>
+
+<p>There are two general modes for contributing usage data:</p>
+
+<ul>
+  <li><b>End-user browser-sourced contributions</b> - members can embed the either A15K-generated javascript clients or member wrappers of those clients in user-facing applications; those clients will send information to a15K
+  directly from an end-users browser.  Such information will include metrics to help us compute time on task in addition assessment flaggings and ratings.  Embeds can vary from including a script with some
+  simple configuration (a la Google Analytics) to embedding a script that shows flagging and rating UI elements.</li>
+  <li><b>Backend-to-backend contributions</b> - Some information, such as whether a student answered an assessment correctly, is too sensitive to send from a browser.  We recommend that this data be sent to the a15K APIs
+  directly from member servers.</li>
+</ul>
+
+<p>Feedback from members is requested to guide how we extend our existing capabilities in this area.</p>
+
+<%#= highlightjs(klass: 'html', content: <<-CONTENT
 <script src="//cdnjs.cloudflare.com/ajax/libs/interactions.a15k.js/1.0.0/interactions.min.js"></script>
 CONTENT
 )
 %>
 
-<p>...</p>
+<h3>More Questions?</h3>
 
-
+<p>Contact us at <%= mail_to "a15k@openstax.org", "a15k@openstax.org" %>.</p>

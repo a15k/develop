@@ -159,6 +159,11 @@ In our application's initialization code, we configure these bindings so they ar
 CONTENT
 ) %>
 
+<p>Note that if you're playing with a sandbox environment, the host will be different, e.g. "demo.dev.a15k.org".</p>
+
+<p>A15k power users within your organization can access your API key by clicking "Actions" in the
+  navigation bar at the top of the main a15k site and then clicking on "API Access".  The tokens at the top are what you need, and you can create more than one.  The tokens at the bottom of that page are for contributing usage data and involve a separate configuration.</p>
+
 <p>Next we've pasted the content of our <%= link_to "export script, exporter.rb", "https://github.com/openstax/exercises/blob/master/lib/a15k/exporter.rb" %>.</p>
 
 <%= highlightjs(klass: 'ruby', content: <<-CONTENT
@@ -260,6 +265,8 @@ module A15k
 end
 CONTENT
 ) %>
+
+<p>When contributing metadata, you can put any JSON you want in the <b>metadata</b> field.  However, if you include a <b>tags</b> key containing an array of strings in the metadata, those string values will be displayed as tags on the main a15k site.</p>
 
 <p>The exporter shown above is a pure Ruby class.  We made a <%= link_to "Rake script", "https://github.com/openstax/exercises/blob/master/lib/tasks/a15k/export.rake" %>
 that we can call from the command line to invoke the exporter.

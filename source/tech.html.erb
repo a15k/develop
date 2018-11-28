@@ -305,6 +305,22 @@ end
 CONTENT
 ) %>
 
+<h4 id="non-text-content">What about non-text content, such as zip files?</h4>
+
+<p>If you have non-text content, for example if your assessments are wrapped in zip files, you'll need to convert it to a text representation.  One way to do this is to Base64 encode your binary content.</p>
+
+<%= highlightjs(klass: 'ruby', content: <<-CONTENT
+require 'base64'
+
+content = File.binread("myfile.zip")
+encoded = Base64.encode64(content)
+
+# then make `encoded` be the value of the `content` key in your contribution.
+CONTENT
+) %>
+
+<p>Whatever approach you take, make sure to document how you encoded it in your uploaded format so that others will know how to decode it.</p>
+
 <h4 id="preview-recs">Recommendations for Preview HTML</h4>
 
 <p>An nice feature of a15k is that we don't require everyone to contribute content according to a standard schema.  But the flip side of that is that it is not possible to show previews of arbitrary content.
